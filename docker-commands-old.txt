@@ -1,0 +1,103 @@
+Common Docker Commands:
+***********************
+
+Create the docker image with Dockerfile in the root
+> docker build .
+
+Create docker image with tag name
+> docker build -t my-app-img .
+
+Create docker image with tag name and version
+> docker build -t my-app-img:latest .
+
+List docker images
+> docker images
+
+Remove image
+> docker rmi my-app-img
+
+************
+
+Run container for the image my-app-img
+> docker run my-app-img
+
+Run container with name for the image my-app-img
+> docker run --name my-app-img-cont my-app-img
+
+Run container in detached mode and with port 3000 exposed
+> docker run -d -p 3000:3000 --name my-app-img-cont my-app-img
+
+Run container to be removed when stopped
+> docker run --rm -d -p 3000:3000 --name my-app-img-cont my-app-img
+
+List containers
+> docker ps
+
+List All Containers (Including Stopped)
+> docker ps -a
+
+Stop the container
+> docker stop my-app-cont
+
+Remove a container
+> docker rm my-app-cont
+
+View container logs
+> docker logs my-app-cont
+
+*****************
+
+Build and Run Using Docker Compose
+> docker-compose up --build
+
+Stop and Remove Containers Using Docker Compose
+> docker-compose down
+
+*********************************************************************
+Docker for mongodb, backend(node) and frontend(react) app
+
+Create a network to be commonly used by all the containers
+> docker network create goals-net
+
+mongodb(This image will be fetched from online)
+***********************************************
+
+> docker run --name mongodb -v data:/data/db --network goals-net --rm -d mongo
+
+Description:
+------------
+--name mongodb - Name of the container
+-v data:/data/db - A backup data will be created on host machine
+--network goals-net - Name of the common network for the apps
+
+backend
+*******
+> docker build -t goals-node .
+
+> docker run --name goals-backend --network goals-net -v C:/wamp/www/docker-multi-container-app/backend:/app -v logs:/app/logs -v /app/node_modules -d --rm -p 80:80 goals-node
+
+Description:
+------------
+--name goals-backend - Name of the container
+-v C:/wamp/www/docker-multi-container-app/backend:/app - This will keep updating the code on changes to the container
+-v logs:/app/logs - Backup of logs will be created on host machine.
+-v /app/node_modules - node_modules folder will be ignored from host machine
+--network goals-net - Name of the common network for the apps
+-p 80:80 - Port 80 exposed for the app
+
+> docker logs goals-backend
+
+frontend
+********
+> docker build -t goals-react .
+
+> docker run --name goals-frontend --network goals-net -v C:/wamp/www/docker-multi-container-app/frontend/src:/app/src -v /app/node_modules --rm -p 3000:3000 -it goals-react
+
+Description:
+------------
+--name goals-frontend - Name of the container
+-v C:/wamp/www/docker-multi-container-app/frontend/src:/app/src - This will keep updating the code on changes to the container
+-v /app/node_modules - node_modules folder will be ignored from host machine
+--network goals-net - Name of the common network for the apps
+-p 3000:3000 - Port 3000 exposed for the app
+-it - Runs in interacting mode as it is a frontend app which runs in browser
