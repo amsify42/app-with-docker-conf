@@ -30,6 +30,10 @@ Run container in detached mode and with port 3000 exposed
 Run container to be removed when stopped
 > docker run --rm -d -p 3000:3000 --name my-app-img-cont my-app-img
 
+Access running container in interactive mode
+> docker exec -it my-app-cont
+> docker run -it node npm init // node is external image
+
 List containers
 > docker ps
 
@@ -48,6 +52,9 @@ View container logs
 *****************
 
 Build and Run Using Docker Compose
+> docker-compose up
+
+Re evaluate Dockerfile, build and run containers
 > docker-compose up --build
 
 Stop and Remove Containers Using Docker Compose
